@@ -1,6 +1,7 @@
 import 'package:diary_flutter/data/database.dart';
 import 'package:diary_flutter/write.dart';
 import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import 'data/diary.dart';
 import 'data/util.dart';
@@ -37,12 +38,17 @@ class _MyHomePageState extends State<MyHomePage> {
   int selectIndex = 0;
 
   Diary? todayDiary;
+  Diary? historyDiary;
 
   List<String> statusImg = [
     'assets/img/ico-weather.png',
     'assets/img/ico-weather_2.png',
     'assets/img/ico-weather_3.png',
   ];
+
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
 
   void getTodayDiary() async {
     List<Diary> diary = await dbHelper.getDiaryByDate(Utils.getFormatTime(DateTime.now()));
@@ -65,29 +71,55 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(child: getPage()),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Diary _d;
+          if (selectIndex == 0) {
+            Diary _d;
 
-          if (todayDiary != null) {
-            _d = todayDiary!;
-          } else {
-            _d = Diary(
-              title: '',
-              memo: '',
-              image: 'assets/img/b1.jpg',
-              date: Utils.getFormatTime(DateTime.now()),
-              status: 0,
-            );
-          }
+            if (todayDiary != null) {
+              _d = todayDiary!;
+            } else {
+              _d = Diary(
+                title: '',
+                memo: '',
+                image: 'assets/img/b1.jpg',
+                date: Utils.getFormatTime(DateTime.now()),
+                status: 0,
+              );
+            }
 
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext ctx) => DiaryWritePage(
-                diary: _d,
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext ctx) => DiaryWritePage(
+                  diary: _d,
+                ),
               ),
-            ),
-          );
+            );
 
-          getTodayDiary();
+            getTodayDiary();
+          } else {
+            Diary _d;
+
+            if (historyDiary != null) {
+              _d = historyDiary!;
+            } else {
+              _d = Diary(
+                title: '',
+                memo: '',
+                image: 'assets/img/b1.jpg',
+                date: Utils.getFormatTime(_selectedDay),
+                status: 0,
+              );
+            }
+
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext ctx) => DiaryWritePage(
+                  diary: _d,
+                ),
+              ),
+            );
+
+            getDiaryByDate(_selectedDay);
+          }
         },
         tooltip: '',
         child: const Icon(Icons.add),
@@ -179,8 +211,104 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void getDiaryByDate(DateTime date) async {
+    List<Diary> d = await dbHelper.getDiaryByDate(Utils.getFormatTime(date));
+    setState(() {
+      if (d.isEmpty) {
+        historyDiary = null;
+      } else {
+        historyDiary = d.first;
+      }
+    });
+  }
+
   Widget getHistoryPage() {
-    return Container();
+    return ListView.builder(
+      itemCount: 2,
+      itemBuilder: (ctx, idx) {
+        if (idx == 0) {
+          return TableCalendar(
+            // https://dipeshgoswami.medium.com/table-calendar-3-0-0-null-safety-818ba8d4c45e
+            // reference: Flutter table_calendar >= 3.0.0
+            firstDay: DateTime(2021, 1, 1),
+            lastDay: DateTime(2030, 12, 31),
+            focusedDay: _focusedDay,
+            calendarFormat: _calendarFormat,
+            onFormatChanged: (format) {
+              if (_calendarFormat != format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              }
+            },
+            selectedDayPredicate: (day) {
+              return isSameDay(_selectedDay, day);
+            },
+            onDaySelected: (selectedDay, focusedDay) {
+              if (!isSameDay(_selectedDay, selectedDay)) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              }
+              // _selectedDay = selectedDay;
+              getDiaryByDate(selectedDay);
+            },
+          );
+        } else if (idx == 1) {
+          if (historyDiary == null) {
+            return Container();
+          }
+          return Column(
+            children: [
+              Container(
+                // container 로 항상 감쌀 경우 margin, padding option 을 사용할 수 있음, 개발 완료 후 무의미한 container 는 삭제
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${_selectedDay.month}.${_selectedDay.day}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Image.asset(statusImg[int.parse(historyDiary!.status.toString())], fit: BoxFit.contain),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white54,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      historyDiary!.title.toString(),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Container(height: 12),
+                    Text(historyDiary!.memo.toString(), style: const TextStyle(fontSize: 18)),
+                    Container(height: 12),
+                    Image.asset(historyDiary!.image.toString()),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+        return Container();
+      },
+    );
   }
 
   Widget getChartPage() {
