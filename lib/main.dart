@@ -159,7 +159,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget getTodayPage() {
     if (todayDiary == null) {
-      return const Text('일기 작성 해주세요!');
+      return const Center(
+        child: Text(
+          '일기 작성 해주세요!',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      );
     }
     return Stack(
       // widget 위에 widget 을 표현함으로써 배경 이미지를 적용가능
