@@ -131,19 +131,21 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.today), label: '오늘'),
-            BottomNavigationBarItem(icon: Icon(Icons.calendar_today_rounded), label: '기록'),
-            BottomNavigationBarItem(icon: Icon(Icons.insert_chart), label: '통계'),
-          ],
-          onTap: (idx) {
-            setState(() {
-              selectIndex = idx;
-            });
-            if (selectIndex == 2) {
-              getAllDiary();
-            }
-          }),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.today), label: '오늘'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today_rounded), label: '기록'),
+          BottomNavigationBarItem(icon: Icon(Icons.insert_chart), label: '통계'),
+        ],
+        currentIndex: selectIndex,
+        onTap: (idx) {
+          setState(() {
+            selectIndex = idx;
+          });
+          if (selectIndex == 2) {
+            getAllDiary();
+          }
+        },
+      ),
     );
   }
 
