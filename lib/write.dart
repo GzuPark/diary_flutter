@@ -50,6 +50,9 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
           TextButton(
             child: const Text('저장', style: TextStyle(color: Colors.white)),
             onPressed: () async {
+              widget.diary.title = nameController.text;
+              widget.diary.memo = memoController.text;
+
               await dbHelper.insertDiary(widget.diary);
               Navigator.of(context).pop();
             },

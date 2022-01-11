@@ -62,22 +62,27 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(''),
-      ),
       body: Container(child: getPage()),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          Diary _d;
+
+          if (todayDiary != null) {
+            _d = todayDiary!;
+          } else {
+            _d = Diary(
+              title: '',
+              memo: '',
+              image: 'assets/img/b1.jpg',
+              date: Utils.getFormatTime(DateTime.now()),
+              status: 0,
+            );
+          }
+
           await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (BuildContext ctx) => DiaryWritePage(
-                diary: Diary(
-                  title: '',
-                  memo: '',
-                  image: 'assets/img/b1.jpg',
-                  date: Utils.getFormatTime(DateTime.now()),
-                  status: 0,
-                ),
+                diary: _d,
               ),
             ),
           );
@@ -127,20 +132,46 @@ class _MyHomePageState extends State<MyHomePage> {
         Positioned.fill(
           child: ListView(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${DateTime.now().month}.${DateTime.now().day}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+              Container(
+                // container 로 항상 감쌀 경우 margin, padding option 을 사용할 수 있음, 개발 완료 후 무의미한 container 는 삭제
+                margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${DateTime.now().month}.${DateTime.now().day}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  Image.asset(statusImg[int.parse(todayDiary!.status.toString())], fit: BoxFit.contain),
-                ],
-              )
+                    Image.asset(statusImg[int.parse(todayDiary!.status.toString())], fit: BoxFit.contain),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white54,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      todayDiary!.title.toString(),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Container(height: 12),
+                    Text(todayDiary!.memo.toString(), style: const TextStyle(fontSize: 18)),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
