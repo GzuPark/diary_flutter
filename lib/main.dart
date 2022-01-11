@@ -1,3 +1,4 @@
+import 'package:diary_flutter/data/database.dart';
 import 'package:diary_flutter/write.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +33,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final dbHelper = DatabaseHelper.instance;
   int selectIndex = 0;
+
+  Diary? todayDiary;
+
+  List<String> statusImg = [
+    'assets/img/ico-weather.png',
+    'assets/img/ico-weather_2.png',
+    'assets/img/ico-weather_3.png',
+  ];
+
+  void getTodayDiary() async {
+    List<Diary> diary = await dbHelper.getDiaryByDate(Utils.getFormatTime(DateTime.now()));
+    if (diary.isNotEmpty) {
+      todayDiary = diary.first;
+    }
+
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getTodayDiary();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           );
+
+          getTodayDiary();
         },
         tooltip: '',
         child: const Icon(Icons.add),
@@ -85,7 +112,40 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getTodayPage() {
-    return Container();
+    if (todayDiary == null) {
+      return const Text('일기 작성 해주세요!');
+    }
+    return Stack(
+      // widget 위에 widget 을 표현함으로써 배경 이미지를 적용가능
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            todayDiary!.image.toString(),
+            fit: BoxFit.cover,
+          ),
+        ),
+        Positioned.fill(
+          child: ListView(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${DateTime.now().month}.${DateTime.now().day}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Image.asset(statusImg[int.parse(todayDiary!.status.toString())], fit: BoxFit.contain),
+                ],
+              )
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget getHistoryPage() {
