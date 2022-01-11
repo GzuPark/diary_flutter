@@ -93,7 +93,7 @@ class DatabaseHelper {
     return diaries;
   }
 
-  Future<List<Diary>> getDiaryByDate(int date) async {
+  Future<List<Diary>> getDiaryByDate(int? date) async {
     Database db = await instance.database;
     List<Diary> diaries = [];
 

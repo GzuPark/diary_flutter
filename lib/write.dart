@@ -38,8 +38,8 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.diary.title;
-    memoController.text = widget.diary.memo;
+    nameController.text = widget.diary.title!;
+    memoController.text = widget.diary.memo!;
   }
 
   @override
@@ -65,7 +65,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                 width: 100,
                 height: 100,
                 margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                child: Image.asset(widget.diary.image, fit: BoxFit.cover), // 배경화면일 경우 cover 를 사용하여 꽉차게 가능
+                child: Image.asset(widget.diary.image!, fit: BoxFit.cover), // 배경화면일 경우 cover 를 사용하여 꽉차게 가능
               ),
               onTap: () {
                 setState(() {
