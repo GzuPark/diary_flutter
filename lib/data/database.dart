@@ -32,13 +32,11 @@ class DatabaseHelper {
   Future _onCreate(Database db, int version) async {
     await db.execute('''
     CREATE TABLE IF NOT EXISTS $diaryTable (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      date INTEGER DEFAULT 0,
       title String,
       memo String,
-      color INTEGER,
-      done INTEGER,
-      category String
+      image String,
+      date INTEGER DEFAULT 0,
+      status INTEGER DEFAULT 0
     )
     ''');
   }
@@ -48,76 +46,71 @@ class DatabaseHelper {
   Future<int> insertDiary(Diary diary) async {
     Database db = await instance.database;
 
-    if (diary.id == null) {
-      // 새로 추가
+    List<Diary> d = await getDiaryByDate(diary.date);
+
+    if (d.isEmpty) {
       Map<String, dynamic> row = {
         "title": diary.title,
-        "date": diary.date,
         "memo": diary.memo,
-        "color": diary.color,
-        "done": diary.done,
-        "category": diary.category,
+        "image": diary.image,
+        "date": diary.date,
+        "status": diary.status,
       };
 
       return await db.insert(diaryTable, row);
     } else {
       Map<String, dynamic> row = {
         "title": diary.title,
-        "date": diary.date,
         "memo": diary.memo,
-        "color": diary.color,
-        "done": diary.done,
-        "category": diary.category,
+        "image": diary.image,
+        "date": diary.date,
+        "status": diary.status,
       };
 
-      return await db.update(diaryTable, row, where: "id = ?", whereArgs: [diary.id]);
+      return await db.update(diaryTable, row, where: "date = ?", whereArgs: [diary.date]);
     }
   }
 
   Future<List<Diary>> getAllDiary() async {
     Database db = await instance.database;
-    List<Diary> diarys = [];
+    List<Diary> diaries = [];
 
     var queries = await db.query(diaryTable);
 
     for (var q in queries) {
-      diarys.add(
+      diaries.add(
         Diary(
           // sql database 에서 받아오는 결과는 object 로 인식되어 원하는 type 로 재설정해줄 것
-          id: int.parse(q["id"].toString()),
           title: q["title"].toString(),
-          date: int.parse(q["date"].toString()),
           memo: q["memo"].toString(),
-          color: int.parse(q["color"].toString()),
-          done: int.parse(q["done"].toString()),
-          category: q["category"].toString(),
+          image: q["image"].toString(),
+          date: int.parse(q["date"].toString()),
+          status: int.parse(q["status"].toString()),
         ),
       );
     }
 
-    return diarys;
+    return diaries;
   }
 
-  Future<List<Diary>> getDiaryByDate(int date) async {
+  Future<List<Diary>> getDiaryByDate(int? date) async {
     Database db = await instance.database;
-    List<Diary> diarys = [];
+    List<Diary> diaries = [];
 
     var queries = await db.query(diaryTable, where: "date = ?", whereArgs: [date]);
 
     for (var q in queries) {
-      diarys.add(
+      diaries.add(
         Diary(
-          id: int.parse(q["id"].toString()),
           title: q["title"].toString(),
-          date: int.parse(q["date"].toString()),
           memo: q["memo"].toString(),
-          color: int.parse(q["color"].toString()),
-          done: int.parse(q["done"].toString()),
-          category: q["category"].toString(),
+          image: q["image"].toString(),
+          date: int.parse(q["date"].toString()),
+          status: int.parse(q["status"].toString()),
         ),
       );
     }
 
-    return diarys;
+    return diaries;
   }
 }
