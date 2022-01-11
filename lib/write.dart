@@ -64,7 +64,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
               child: Container(
                 width: 100,
                 height: 100,
-                margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 child: Image.asset(widget.diary.image, fit: BoxFit.cover), // 배경화면일 경우 cover 를 사용하여 꽉차게 가능
               ),
               onTap: () {
@@ -77,7 +77,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
             );
           } else if (idx == 1) {
             return Container(
-              margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
+              margin: const EdgeInsets.symmetric(vertical: 22, horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: List.generate(
@@ -87,10 +87,11 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                       child: Container(
                         height: 70,
                         width: 70,
-                        padding: EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                            border: Border.all(color: _idx == widget.diary.status ? Colors.blue : Colors.transparent),
-                            borderRadius: BorderRadius.circular(100)),
+                          border: Border.all(color: _idx == widget.diary.status ? Colors.blue : Colors.transparent),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
                         child: Image.asset(
                           statusImg[_idx],
                           fit: BoxFit.contain,
@@ -108,29 +109,29 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
             );
           } else if (idx == 2) {
             return Container(
-              margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              child: Text('제목', style: TextStyle(fontSize: 20)),
+              margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              child: const Text('제목', style: TextStyle(fontSize: 20)),
             );
           } else if (idx == 3) {
             return Container(
-              margin: EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
                 controller: nameController,
               ),
             );
           } else if (idx == 4) {
             return Container(
-              margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              child: Text('내용', style: TextStyle(fontSize: 20)),
+              margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              child: const Text('내용', style: TextStyle(fontSize: 20)),
             );
           } else if (idx == 5) {
             return Container(
-              margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               child: TextField(
                 controller: memoController,
                 minLines: 10,
                 maxLines: 20,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),
