@@ -39,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Diary? todayDiary;
   Diary? historyDiary;
+  List<Diary> allDiaries = [];
 
   List<String> statusImg = [
     'assets/img/ico-weather.png',
@@ -56,6 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
       todayDiary = diary.first;
     }
 
+    setState(() {});
+  }
+
+  void getAllDiary() async {
+    allDiaries = await dbHelper.getAllDiary();
     setState(() {});
   }
 
@@ -134,6 +140,9 @@ class _MyHomePageState extends State<MyHomePage> {
             setState(() {
               selectIndex = idx;
             });
+            if (selectIndex == 2) {
+              getAllDiary();
+            }
           }),
     );
   }
@@ -312,6 +321,49 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getChartPage() {
-    return Container();
+    return ListView.builder(
+      itemCount: 5,
+      itemBuilder: (BuildContext ctx, int idx) {
+        if (idx == 0) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(
+                statusImg.length,
+                (_idx) {
+                  return Column(
+                    children: [
+                      Image.asset(statusImg[_idx], fit: BoxFit.contain),
+                      Text("${allDiaries.where((element) => element.status == _idx).length}개"),
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
+        } else if (idx == 1) {
+          return SizedBox(
+            height: 120,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              scrollDirection: Axis.horizontal,
+              children: List.generate(
+                allDiaries.length,
+                (_idx) {
+                  return Container(
+                    height: 100,
+                    width: 100,
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Image.asset(allDiaries[_idx].image!, fit: BoxFit.cover),
+                  );
+                },
+              ),
+            ),
+          );
+        }
+        return Container();
+      },
+    );
   }
 }
