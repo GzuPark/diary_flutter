@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 diary: Diary(
                   title: '',
                   memo: '',
-                  image: '',
+                  image: 'assets/img/b1.jpg',
                   date: Utils.getFormatTime(DateTime.now()),
                   status: 0,
                 ),
