@@ -268,51 +268,61 @@ class _MyHomePageState extends State<MyHomePage> {
           if (historyDiary == null) {
             return Container();
           }
-          return Column(
-            children: [
-              Container(
-                // container 로 항상 감쌀 경우 margin, padding option 을 사용할 수 있음, 개발 완료 후 무의미한 container 는 삭제
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${_selectedDay.month}.${_selectedDay.day}',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+          return SizedBox(
+            height: 300,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(historyDiary!.image.toString(), fit: BoxFit.cover),
+                ),
+                Positioned.fill(
+                  child: ListView(
+                    children: [
+                      Container(
+                        // container 로 항상 감쌀 경우 margin, padding option 을 사용할 수 있음, 개발 완료 후 무의미한 container 는 삭제
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${_selectedDay.month}.${_selectedDay.day}',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Image.asset(statusImg[int.parse(historyDiary!.status.toString())], fit: BoxFit.contain),
+                          ],
+                        ),
                       ),
-                    ),
-                    Image.asset(statusImg[int.parse(historyDiary!.status.toString())], fit: BoxFit.contain),
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white54,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      historyDiary!.title.toString(),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white54,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              historyDiary!.title.toString(),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Container(height: 12),
+                            Text(historyDiary!.memo.toString(), style: const TextStyle(fontSize: 18)),
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(height: 12),
-                    Text(historyDiary!.memo.toString(), style: const TextStyle(fontSize: 18)),
-                    Container(height: 12),
-                    Image.asset(historyDiary!.image.toString()),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
         return Container();
